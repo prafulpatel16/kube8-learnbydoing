@@ -64,3 +64,26 @@ store-products   ClusterIP   10.104.11.230   <none>        80/TCP    59s
 3.Use kubectl exec to query the store-products service from the busybox testing pod.
 
 kubectl exec busybox -- curl -s store-products
+
+curl result:
+
+cloud_user@ip-10-0-1-101:~$ kubectl exec busybox -- curl -s store-products
+{
+        "Products":[
+                {
+                        "Name":"Apple",
+                        "Price":1000.00,
+                },
+                {
+                        "Name":"Banana",
+                        "Price":5.00,
+                },
+                {
+                        "Name":"Orange",
+                        "Price":1.00,
+                },
+                {
+                        "Name":"Pear",
+                        "Price":0.50,
+                }
+        ]
