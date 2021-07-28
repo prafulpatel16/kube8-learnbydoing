@@ -60,3 +60,101 @@ kubectl get po -o wide
 You should see the node with the label in the node column
 
 Conclusion
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------
+
+cloud_user@ip-10-0-1-101:~$ kubectl get nodes
+NAME            STATUS   ROLES    AGE   VERSION
+ip-10-0-1-101   Ready    master   58m   v1.18.0
+ip-10-0-1-102   Ready    <none>   58m   v1.18.0
+ip-10-0-1-103   Ready    <none>   58m   v1.18.0
+
+    List all the pods in all namespaces.
+    Use the following command to list the pods in all namespaces:
+    
+    kubectl get pods --all-namespaces
+
+    cloud_user@ip-10-0-1-101:~$ kubectl get pods --all-namespaces
+    NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE
+    kube-system   calico-kube-controllers-59877c7fb4-p9pn7   1/1     Running   0          59m
+    kube-system   calico-node-n7vvd                          1/1     Running   0          59m
+    kube-system   calico-node-n8z6c                          1/1     Running   0          59m
+    kube-system   calico-node-qvgqc                          1/1     Running   0          59m
+    kube-system   coredns-66bff467f8-cphb4                   1/1     Running   0          59m
+    kube-system   coredns-66bff467f8-twvf2                   1/1     Running   0          59m
+    kube-system   etcd-ip-10-0-1-101                         1/1     Running   0          60m
+    kube-system   kube-apiserver-ip-10-0-1-101               1/1     Running   0          60m
+    kube-system   kube-controller-manager-ip-10-0-1-101      1/1     Running   0          60m
+    kube-system   kube-proxy-dpstr                           1/1     Running   0          59m
+    kube-system   kube-proxy-ln8rh                           1/1     Running   0          59m
+    kube-system   kube-proxy-rqxvx                           1/1     Running   0          59m
+    kube-system   kube-scheduler-ip-10-0-1-101               1/1     Running   0          60m
+    
+    
+    List all the namespaces in the cluster.
+Use the following command to list all the namespaces in the cluster:
+
+kubectl get namespaces
+
+cloud_user@ip-10-0-1-101:~$ kubectl get namespaces
+NAME              STATUS   AGE
+default           Active   61m
+kube-node-lease   Active   61m
+kube-public       Active   61m
+kube-system       Active   61m
+
+Check to see if there are any pods running in the default namespace.
+Use the following command to list the pods in the default namespace:
+
+kubectl get pods
+
+cloud_user@ip-10-0-1-101:~$ kubectl get pods
+No resources found in default namespace.
+
+Find the IP address of the API server running on the master node.
+Use the following command to find the IP address of the API server:
+
+kubectl get pods --all-namespaces -o wide
+
+cloud_user@ip-10-0-1-101:~$ kubectl get pods --all-namespaces -o wide
+NAMESPACE     NAME                                       READY   STATUS    RESTARTS   AGE   IP                NODE            NOMINATED NODE   READINESS GATES
+kube-system   calico-kube-controllers-59877c7fb4-p9pn7   1/1     Running   0          66m   192.168.111.1     ip-10-0-1-103   <none>           <none>
+kube-system   calico-node-n7vvd                          1/1     Running   0          66m   10.0.1.101        ip-10-0-1-101   <none>           <none>
+kube-system   calico-node-n8z6c                          1/1     Running   0          66m   10.0.1.102        ip-10-0-1-102   <none>           <none>
+kube-system   calico-node-qvgqc                          1/1     Running   0          66m   10.0.1.103        ip-10-0-1-103   <none>           <none>
+kube-system   coredns-66bff467f8-cphb4                   1/1     Running   0          66m   192.168.163.193   ip-10-0-1-102   <none>           <none>
+kube-system   coredns-66bff467f8-twvf2                   1/1     Running   0          66m   192.168.111.2     ip-10-0-1-103   <none>           <none>
+kube-system   etcd-ip-10-0-1-101                         1/1     Running   0          67m   10.0.1.101        ip-10-0-1-101   <none>           <none>
+kube-system   kube-apiserver-ip-10-0-1-101               1/1     Running   0          67m   10.0.1.101        ip-10-0-1-101   <none>           <none>
+kube-system   kube-controller-manager-ip-10-0-1-101      1/1     Running   0          67m   10.0.1.101        ip-10-0-1-101   <none>           <none>
+kube-system   kube-proxy-dpstr                           1/1     Running   0          66m   10.0.1.102        ip-10-0-1-102   <none>           <none>
+kube-system   kube-proxy-ln8rh                           1/1     Running   0          66m   10.0.1.103        ip-10-0-1-103   <none>           <none>
+kube-system   kube-proxy-rqxvx                           1/1     Running   0          66m   10.0.1.101        ip-10-0-1-101   <none>           <none>
+kube-system   kube-scheduler-ip-10-0-1-101               1/1     Running   0          67m   10.0.1.101        ip-10-0-1-101   <none>           <none>
+
+
+    List the labels for all nodes in the cluster
+    Use the following command to list the labels for all nodes:
+    
+    kubectl get no --show-labels
+    
+    cloud_user@ip-10-0-1-101:~$ kubectl get nodes --show-labelsNAME            STATUS   ROLES    AGE   VERSION   LABELS
+ip-10-0-1-101   Ready    master   68m   v1.18.0   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=ip-10-0-1-101,kubernetes.io/os=linux,node-role.kubernetes.io/master=
+ip-10-0-1-102   Ready    <none>   68m   v1.18.0   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,disk=ssd,kubernetes.io/arch=amd64,kubernetes.io/hostname=ip-10-0-1-102,kubernetes.io/os=linux
+ip-10-0-1-103   Ready    <none>   68m   v1.18.0   beta.kubernetes.io/arch=amd64,beta.kubernetes.io/os=linux,kubernetes.io/arch=amd64,kubernetes.io/hostname=ip-10-0-1-103,kubernetes.io/os=linux
+
+
+
+    cloud_user@ip-10-0-1-101:~$ kubectl apply -f https://raw.githubusercontent.com/prafulpatel16/kube8-learnbydoing/master/proj4/pod.yaml
+    pod/nginx created
+    cloud_user@ip-10-0-1-101:~$ kubectl get pods
+    NAME    READY   STATUS              RESTARTS   AGE
+    nginx   0/1     ContainerCreating   0          5s
+
+
+    cloud_user@ip-10-0-1-101:~$ kubectl get pods -o wide
+NAME    READY   STATUS    RESTARTS   AGE   IP                NODE            NOMINATED NODE   READINESS GATES
+nginx   1/1     Running   0          35s   192.168.163.195   ip-10-0-1-102   <none>           <none>    
