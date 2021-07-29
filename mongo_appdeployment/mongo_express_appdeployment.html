@@ -98,13 +98,137 @@ mongodb-deployment   2/2     2            2           88s
 
 Validate that alongwith the mongodb deployment there is a replicaset also created 
 
+- Now create the mongodb service file, it can be created in the same yml file
+
+root@master-node-ubnt:~# kubectl apply -f https://raw.githubusercontent.com/prafulpatel16/kube8-lea
+rnbydoing/master/mongo_appdeployment/mogodb-deployment.yml
+deployment.apps/mongodb-deployment unchanged
+service/mongodb-service created
+
+- Validate that the mongodb service is created
+
+root@master-node-ubnt:~# kubectl get svc
+NAME              TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)     AGE
+kubernetes        ClusterIP   10.96.0.1      <none>        443/TCP     7d22h
+mongodb-service   ClusterIP   10.99.174.69   <none>        27017/TCP   46s
+
+- Verify all the services about mongodb
+
+root@master-node-ubnt:~# kubectl get all
+NAME                                     READY   STATUS    RESTARTS   AGE
+pod/mongodb-deployment-8f6675bc5-8dkt5   1/1     Running   0          15m
+pod/mongodb-deployment-8f6675bc5-vdsv8   1/1     Running   0          15m
+NAME                      TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)     AGE
+service/kubernetes        ClusterIP   10.96.0.1      <none>        443/TCP     7d22h
+service/mongodb-service   ClusterIP   10.99.174.69   <none>        27017/TCP   82s
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/mongodb-deployment   2/2     2            2           15m
+NAME                                           DESIRED   CURRENT   READY   AGE
+replicaset.apps/mongodb-deployment-8f6675bc5   2         2         2       15m
+
+-Verify the mongodb service port is correctly associated
+identify the field Endpints has the correct port is tied with the ip address
+Endpoints:         10.36.0.1:27017,10.44.0.1:27017 
+
+root@master-node-ubnt:~# kubectl describe svc mongodb-service
+Name:              mongodb-service
+Namespace:         default
+Labels:            <none>
+Annotations:       <none>
+Selector:          app=mongodb
+Type:              ClusterIP
+IP Family Policy:  SingleStack
+IP Families:       IPv4
+IP:                10.99.174.69
+IPs:               10.99.174.69
+Port:              <unset>  27017/TCP
+TargetPort:        27017/TCP
+Endpoints:         10.36.0.1:27017,10.44.0.1:27017
+Session Affinity:  None
+Events:            <none>
+
+-Crossverify the pod has correct IPs associated as the mongodb service
+Verify the IPs from service and pods 
+
+root@master-node-ubnt:~# kubectl get pod -o wide
+NAME                                 READY   STATUS    RESTARTS   AGE   IP          NODE     NOMINA
+TED NODE   READINESS GATES
+mongodb-deployment-8f6675bc5-8dkt5   1/1     Running   0          20m   10.44.0.1   node-1   <none>
+           <none>
+mongodb-deployment-8f6675bc5-vdsv8   1/1     Running   0          20m   10.36.0.1   node-2   <none>
+           <none>
+
+-Check all the components regarding to the mongodb
+
+root@master-node-ubnt:~# kubectl get all | grep mongodb
+pod/mongodb-deployment-8f6675bc5-8dkt5   1/1     Running   0          23m
+pod/mongodb-deployment-8f6675bc5-vdsv8   1/1     Running   0          23m
+
+service/mongodb-service   ClusterIP   10.99.174.69   <none>        27017/TCP   8m51s
+
+deployment.apps/mongodb-deployment   2/2     2            2           23m
+
+replicaset.apps/mongodb-deployment-8f6675bc5   2         2         2       23m
+
+- Now create the mongo-express yaml along with the mongo-configmap which contains the mongodb url which needs to connect frm mongo express
 
 
+mongo-express deployment yaml
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo-express
+  labels:
+    app: mongo-express
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mongo-express
+  template:
+    metadata:
+      labels:
+        app: mongo-express
+    spec:
+      containers:
+      - name: mongo-express
+        image: mongo-express
+        ports:
+        - containerPort: 8081
+        - env:
+        - name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+                name: mongodb-secret
+                key: mongo-root-username
+        - name: MONGO_INITDB_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef: 
+                name: mongodb-secret
+                key: mongo-root-password
+        - name: ME_CONFIG_MONGODB_SERVER
+            valueFrom:
+              configMapKeyRef: 
+                name: mongodb-configmap
+                key: database_url
+                 
+mongodb-config map
 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongodb-configmap
+  namespace: default
+data:
+  database_url: mongodb-service
 
+- After creatting these files, it nees to create the configmap first so it can get set the values first before mongo-express
+deployment
 
+-Create a mongo-congigmap first on master nodes
 
+kubectl apply -f 
 
 
 
