@@ -30,3 +30,21 @@ spec:
             secretKeyRef: 
               name: mongodb-secret
               key: mongo-root-password 
+---
+#create a mongodb service yaml in the same file. it can be created in the same file by ---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-service
+spec:
+  selector:
+    app: mongodb
+  ports:
+    - protocol: TCP
+      port: 27017
+      targetPort: 27017
+
+
+
+
